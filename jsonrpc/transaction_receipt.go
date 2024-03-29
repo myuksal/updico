@@ -8,11 +8,11 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-func (container *jsonRPCContainer) TransactionReceipt(hash common.Hash) *types.Receipt {
+func TransactionReceipt(hash common.Hash) *types.Receipt {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(_config.Timeout.TransactionReceipt)*time.Millisecond)
 	defer cancel()
 
-	receipt, err := _it.client.TransactionReceipt(ctx, hash)
+	receipt, err := JsonRPC.client.TransactionReceipt(ctx, hash)
 	if err != nil {
 		panic(err)
 	}

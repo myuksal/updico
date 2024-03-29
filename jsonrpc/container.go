@@ -10,6 +10,10 @@ import (
 
 var once sync.Once
 
+var _config config.JsonRPCConfig
+
+var JsonRPC *jsonRPCContainer
+
 type jsonRPCContainer struct {
 	client *ethclient.Client
 }
@@ -24,25 +28,15 @@ func newJsonRPCContainer(host string) *jsonRPCContainer {
 	return &container
 }
 
-var _config config.JsonRPCConfig
-var _it *jsonRPCContainer
-
 func BootStrap(config config.JsonRPCConfig) {
 	// Singleton initialize
-	if _it == nil {
+	if JsonRPC == nil {
 		once.Do(
 			func() {
 				_config = config
-				_it = newJsonRPCContainer(config.Host)
+				JsonRPC = newJsonRPCContainer(config.Host)
 				log.Println("⚡ now json rpc is ready")
 			},
 		)
 	}
-}
-
-func GetJsonRPC() *jsonRPCContainer {
-	if _it == nil {
-		panic("None-bootstrapped container (jsonRpcContainer)")
-	}
-	return _it
 }

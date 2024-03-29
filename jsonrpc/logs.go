@@ -9,7 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-func (container *jsonRPCContainer) LogsByBlockRange(from big.Int, to big.Int) []types.Log {
+func LogsByBlockRange(from big.Int, to big.Int) []types.Log {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(_config.Timeout.TransactionReceipt)*time.Millisecond)
 	defer cancel()
 
@@ -18,7 +18,7 @@ func (container *jsonRPCContainer) LogsByBlockRange(from big.Int, to big.Int) []
 		ToBlock:   &to,
 	}
 
-	logs, err := _it.client.FilterLogs(ctx, query)
+	logs, err := JsonRPC.client.FilterLogs(ctx, query)
 	if err != nil {
 		panic(err)
 	}
