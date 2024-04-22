@@ -9,34 +9,34 @@ import (
 )
 
 var once sync.Once
-
-var _config config.JsonRPCConfig
-
-var JsonRPC *jsonRPCContainer
+var rpc *jsonRPCContainer
 
 type jsonRPCContainer struct {
 	client *ethclient.Client
 }
 
-func newJsonRPCContainer(host string) *jsonRPCContainer {
-	container := jsonRPCContainer{}
-	client, err := ethclient.Dial(host)
-	if err != nil {
-		panic(err)
-	}
-	container.client = client
-	return &container
-}
-
 func BootStrap(config config.JsonRPCConfig) {
 	// Singleton initialize
-	if JsonRPC == nil {
+	if rpc == nil {
 		once.Do(
 			func() {
-				_config = config
-				JsonRPC = newJsonRPCContainer(config.Host)
+				client, err := ethclient.Dial(config.Host)
+				if err != nil {
+					panic(err)
+				}
+				container := jsonRPCContainer{}
+				container.client = client
+
+				rpc = &container
 				log.Println("⚡ now json rpc is ready")
 			},
 		)
 	}
+}
+
+func GetJsonRpc() *jsonRPCContainer {
+	if rpc == nil {
+		panic("JsonRpc is not bootstrapped")
+	}
+	return rpc
 }

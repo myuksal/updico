@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	MetricRpcCallLatency = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: MetricRpcCallLatencyName,
-		Help: MetricRpcCallLatencyHelp,
-	})
+	JsonRpcHistogram = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Name: CollectMetricJsonRpcName,
+		Help: CollectMetricJsonRpcHelp,
+	}, []string{CollectMetricJsonRpcVector_1},
+	)
 )

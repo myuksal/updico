@@ -19,6 +19,7 @@ type JsonRPCConfig struct {
 	Host    string `yaml:"host"`
 	Timeout struct {
 		TransactionReceipt int32 `yaml:"transactionReceipt" default:"10000"`
+		Block              int32 `yaml:"block" default:"10000"`
 	} `yaml:"timeout"`
 }
 
@@ -29,7 +30,7 @@ type config struct {
 
 var _it *config
 
-func GetConfig() *config {
+func BootStrap() {
 	if _it == nil {
 		once.Do(
 			func() {
@@ -44,6 +45,11 @@ func GetConfig() *config {
 			},
 		)
 	}
+}
 
+func GetConfig() *config {
+	if _it == nil {
+		panic("Config is not bootstrapped")
+	}
 	return _it
 }

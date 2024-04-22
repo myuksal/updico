@@ -1,28 +1,52 @@
 package main
 
 import (
-	"log"
+	"context"
+	"encoding/json"
+	"fmt"
+	"math/big"
+	"net/http"
+	"strconv"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/myuksal/updico/config"
 	"github.com/myuksal/updico/jsonrpc"
+	"github.com/myuksal/updico/transform"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
+	config.BootStrap()
+	configMap := config.GetConfig()
 
-	config := config.GetConfig()
-	jsonrpc.BootStrap(config.JsonRpcConfig)
-	rpc := jsonrpc.GetJsonRPC()
-	receipt := rpc.TransactionReceipt(common.HexToHash("0x028507096f6d825d6612c5c045b430031bd7a473b9039687531a16060b22d0be"))
-	result, _ := receipt.MarshalJSON()
+	jsonrpc.BootStrap(configMap.JsonRpcConfig)
+	rpc := jsonrpc.GetJsonRpc()
 
-	log.Println(string(result))
+	fmt.Println("json rpc => ", configMap.JsonRpcConfig.Host)
 
-	// db := database.CreateConnection()
-	// fmt.Println(db.Config)
+	http.HandleFunc("/block", func(w http.ResponseWriter, r *http.Request) {
+		blockNumberString := r.URL.Query().Get("number")
+		blockNumber, _ := strconv.Atoi(blockNumberString)
 
-	// http.Handle("/metrics", promhttp.Handler())
-	// go dev.CurrentBlock()
+		hid := uuid.New()
+		ctx := context.WithValue(context.Background(), "request-id", hid.String())
 
-	// http.ListenAndServe(":2112", nil)
+		block, err := rpc.Block(ctx, *big.NewInt(int64(blockNumber)))
+		if err != nil {
+			fmt.Println("block rpc error => ", err)
+		}
+
+		blockJson, err := json.Marshal(transform.BlockToResponse(block))
+		if err != nil {
+			fmt.Println("block parse error => ", err)
+		}
+
+		w.Write(blockJson)
+
+	})
+
+	http.Handle("/metrics", promhttp.Handler())
+
+	http.ListenAndServe(":2112", nil)
+
 }

@@ -1,6 +1,7 @@
 jsonRpc:
-  host: https://polygon-rpc.com
+  host: https://eth.public-rpc.com
   timeout:
-    transactionReceipt: 1000
+    transactionReceipt: 10000
+    block: 10000
 prometheus:
   port: 2112

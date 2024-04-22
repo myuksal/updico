@@ -67,24 +67,6 @@ func CurrentBlock() {
 			transaction.Data()
 		}
 
-		// if block.Transactions().Len() > 0 {
-
-		// 	tx, _, _ := client.TransactionByHash(ctx, block.Transactions()[0].Hash())
-		// 	txResult, _ := json.Marshal(tx)
-		// 	fmt.Println("[transaction]")
-		// 	fmt.Print(string(txResult))
-		// 	fmt.Println()
-
-		// 	receipt, _ := client.TransactionReceipt(ctx, tx.Hash())
-
-		// 	if receipt != nil {
-		// 		receiptResult, _ := json.Marshal(tx)
-		// 		fmt.Println("[recript]")
-		// 		fmt.Print(string(receiptResult))
-		// 		fmt.Println()
-		// 	}
-
-		// }
 	}
 
 }
